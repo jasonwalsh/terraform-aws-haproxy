@@ -1,0 +1,48 @@
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run: |
+          wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip
+          sudo unzip -qq terraform.zip -d /usr/local/bin && rm terraform.zip
+
+          sudo pip install pre-commit
+          pre-commit install-hooks
+          pre-commit run --all-files
+  test:
+    docker:
+      - image: circleci/golang:1.12
+    steps:
+      - checkout
+      - run: |
+          wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip
+          sudo unzip -qq terraform.zip -d /usr/local/bin && rm terraform.zip
+          dep ensure
+          go test -v ./...
+    working_directory: /go/src/github.com/jasonwalsh/terraform-aws-haproxy
+  deploy:
+    docker:
+      - image: circleci/node:10.15
+    steps:
+      - checkout
+      - run: |
+          npm install @semantic-release/changelog -D
+          npm install @semantic-release/git -D
+          npx semantic-release@15
+version: 2
+workflows:
+  build-test-deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          filters:
+            branches:
+              only: master
+          requires:
+            - test
+  version: 2
