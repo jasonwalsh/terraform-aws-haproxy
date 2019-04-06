@@ -4,33 +4,54 @@ jobs:
       - image: circleci/python:3.7
     steps:
       - checkout
+      - restore_cache:
+          key: venv-{{ .Branch }}-{{ .Revision }}
       - run: |
           wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip
           sudo unzip -qq terraform.zip -d /usr/local/bin && rm terraform.zip
 
-          sudo pip install pre-commit
+          virtualenv venv
+          . venv/bin/activate
+
+          pip install pre-commit
           pre-commit install-hooks
           pre-commit run --all-files
+      - save_cache:
+          key: venv-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - venv
   test:
     docker:
       - image: circleci/golang:1.12
     steps:
       - checkout
+      - restore_cache:
+          key: gopkg-{{ .Branch }}-{{ .Revision }}-{{ checksum "Gopkg.lock" }}
       - run: |
           wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip
           sudo unzip -qq terraform.zip -d /usr/local/bin && rm terraform.zip
           dep ensure
           go test -v ./...
+      - save_cache:
+          key: gopkg-{{ .Branch }}-{{ .Revision }}-{{ checksum "Gopkg.lock" }}
+          paths:
+            - vendor
     working_directory: /go/src/github.com/jasonwalsh/terraform-aws-haproxy
   deploy:
     docker:
       - image: circleci/node:10.15
     steps:
       - checkout
+      - restore_cache:
+          key: npm-{{ .Branch }}-{{ .Revision }}
       - run: |
           npm install @semantic-release/changelog -D
           npm install @semantic-release/git -D
           npx semantic-release@15
+      - save_cache:
+          key: npm-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - node_modules
 version: 2
 workflows:
   build-test-deploy:
