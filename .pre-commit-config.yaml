@@ -1,6 +1,5 @@
 repos:
   - hooks:
-      - id: terraform_docs
       - id: terraform_fmt
     repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.11.0
