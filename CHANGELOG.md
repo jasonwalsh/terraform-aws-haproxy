@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/jasonwalsh/terraform-aws-haproxy/compare/v1.0.0...v1.1.0) (2019-04-08)
+
+
+### Features
+
+* **HAProxy:** Add HAProxy EC2 instance ([a6108e4](https://github.com/jasonwalsh/terraform-aws-haproxy/commit/a6108e4))
+
 # 1.0.0 (2019-04-06)
 
 
