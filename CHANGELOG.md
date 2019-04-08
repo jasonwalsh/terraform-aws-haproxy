@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/jasonwalsh/terraform-aws-haproxy/compare/v1.1.0...v1.1.1) (2019-04-08)
+
+
+### Bug Fixes
+
+* Fix CircleCI dependency caching ([139e5d8](https://github.com/jasonwalsh/terraform-aws-haproxy/commit/139e5d8))
+
 # [1.1.0](https://github.com/jasonwalsh/terraform-aws-haproxy/compare/v1.0.0...v1.1.0) (2019-04-08)
 
 
